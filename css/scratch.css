@@ -1,0 +1,70 @@
+.common{
+    text-align: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.logo{
+    width: 175px;
+    height: 100px;
+    display: block;
+}
+
+.header{
+    background-color: black;
+    color: white;
+    height: 100px;
+    line-height: 100px;
+}
+
+.mainbody{
+    background-color: whitesmoke;
+}
+
+.footer{
+    position: fixed;
+    background-color: black;
+    color: white;
+    bottom: 0px;
+    left: 5px;
+    right: 5px;
+    height: 25px;
+    line-height: 25px;
+}
+
+.back{
+    color:whitesmoke
+}
+
+img{
+    display: block;
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+nav{
+    background-color: grey;
+    padding: 10px;
+    overflow: hidden;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+nav a{
+    color: #333;
+    text-decoration: none;
+    padding: 20px;
+    font-weight: bold;
+}
+
+nav a:hover{
+    background-color: #ccc;
+}
+
+ul {
+    width: fit-content;
+    margin: 0 auto;
+    padding: 0;
+    list-style-position: inside;
+    text-align: left;
+}

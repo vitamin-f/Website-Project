@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Guess the Disney Movie</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #f8b500, #fceabb);
+      padding: 40px;
+      text-align: center;
+    }
+
+    h1 {
+      color: #444;
+    }
+
+    input, button {
+      padding: 10px;
+      font-size: 16px;
+      margin: 10px;
+    }
+
+    #clue {
+      font-weight: bold;
+      color: #333;
+    }
+
+    #result {
+      font-size: 1.2em;
+      margin-top: 20px;
+    }
+
+    #restartBtn {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🎬 Guess the Disney Movie!</h1>
+  <p>You've got <span id="tries">5</span> tries. Good luck!</p>
+
+  <input list="movies" id="guessInput" placeholder="Type your guess..." />
+  <datalist id="movies"></datalist>
+  <button onclick="checkGuess()">Submit Guess</button>
+  <button id="restartBtn" onclick="restartGame()">🔄 Restart Game</button>
+
+  <div id="clue"></div>
+  <div id="result"></div>
+
+  <script>
+    const movieData = [
+  {
+    title: "The Lion King",
+    clues: [
+      "This movie features an African savannah.",
+      "It has a famous song about not worrying.",
+      "A young cub becomes a king.",
+      "It was released in 1994.",
+      "Characters include Simba and Mufasa."
+    ]
+  },
+  {
+    title: "Aladdin",
+    clues: [
+      "This movie takes place in a fictional Arabian city.",
+      "A magical lamp plays a big role.",
+      "There's a flying carpet.",
+      "The main character has a pet monkey.",
+      "It features a blue genie."
+    ]
+  },
+  {
+    title: "Frozen",
+    clues: [
+      "This movie is set in a snowy kingdom.",
+      "It features two royal sisters.",
+      "One of them has ice powers.",
+      "The song 'Let It Go' is from this movie.",
+      "There's a talking snowman named Olaf."
+    ]
+  },
+  {
+    title: "Moana",
+    clues: [
+      "This movie is set on a Polynesian island.",
+      "The main character sails across the ocean.",
+      "She’s chosen by the ocean itself.",
+      "It features a demigod named Maui.",
+      "The song 'How Far I'll Go' is from this movie."
+    ]
+  },
+  {
+    title: "Tangled",
+    clues: [
+      "This movie is based on a fairy tale.",
+      "It involves a tower and very long hair.",
+      "The heroine has magical healing powers.",
+      "There's a charming thief named Flynn.",
+      "It’s a retelling of Rapunzel."
+    ]
+  },
+  {
+    title: "Zootopia",
+    clues: [
+      "The main character is a rabbit cop.",
+      "She partners with a sly fox.",
+      "It's a city full of anthropomorphic animals.",
+      "They investigate a missing mammal case.",
+      "It deals with themes of bias and acceptance."
+    ]
+  },
+  {
+    title: "Encanto",
+    clues: [
+      "This movie is set in Colombia.",
+      "Everyone in the family has a magical gift—except one.",
+      "It features the Madrigal family.",
+      "There’s a song about someone we don’t talk about.",
+      "The house itself is alive."
+    ]
+  },
+  {
+    title: "Mulan",
+    clues: [
+      "This movie is inspired by Chinese legend.",
+      "The main character disguises herself as a man.",
+      "There’s a small red dragon sidekick.",
+      "She fights against the Huns.",
+      "It features the song 'Reflection'."
+    ]
+  },
+  {
+    title: "The Little Mermaid",
+    clues: [
+      "The main character lives under the sea.",
+      "She dreams of being human.",
+      "A villainess wants her voice.",
+      "She has red hair and a fish tail.",
+      "The song 'Part of Your World' is in this movie."
+    ]
+  },
+  {
+    title: "Finding Nemo",
+    clues: [
+      "This movie takes place mostly underwater.",
+      "It involves a clownfish looking for his son.",
+      "There’s a forgetful blue fish.",
+      "The dentist's office plays a key role.",
+      "Just keep swimming!"
+    ]
+  },
+  {
+    title: "Ratatouille",
+    clues: [
+      "It’s set in a restaurant in Paris.",
+      "The main character is a rat.",
+      "He loves to cook.",
+      "He hides under a chef's hat.",
+      "Anyone can cook!"
+    ]
+  },
+  {
+    title: "Brave",
+    clues: [
+      "It’s set in medieval Scotland.",
+      "The main character is skilled with a bow and arrow.",
+      "She clashes with her mother.",
+      "A spell turns her mother into a bear.",
+      "Her name is Merida."
+    ]
+  },
+  {
+    title: "Toy Story",
+    clues: [
+      "Toys come to life when humans aren’t looking.",
+      "The main characters are a cowboy and a space ranger.",
+      "It was Pixar’s first full-length film.",
+      "Andy is their owner.",
+      "You’ve got a friend in me!"
+    ]
+  },
+  {
+    title: "Inside Out",
+    clues: [
+      "The characters are emotions.",
+      "It takes place mostly inside a young girl's mind.",
+      "Joy and Sadness go on a journey together.",
+      "Core memories are important.",
+      "Bing Bong is unforgettable!"
+    ]
+  },
+  {
+    title: "Lilo & Stitch",
+    clues: [
+      "It’s set in Hawaii.",
+      "An alien crash-lands on Earth.",
+      "Ohana means family.",
+      "The alien is blue and fluffy.",
+      "It’s about unlikely friendship and belonging."
+    ]
+  },
+  {
+  title: "Sleeping Beauty",
+  clues: [
+    "The princess is cursed to sleep.",
+    "She’s also known as Briar Rose.",
+    "Maleficent is the villain.",
+    "A spinning wheel is key to the plot.",
+    "Three fairies help protect her."
+  ]
+},
+{
+  title: "Peter Pan",
+  clues: [
+    "The story takes place in Neverland.",
+    "The main character refuses to grow up.",
+    "There's a fairy companion named Tinker Bell.",
+    "They fly using pixie dust.",
+    "The villain is Captain Hook."
+  ]
+},
+{
+  title: "Pocahontas",
+  clues: [
+    "Set during early American colonization.",
+    "The main character talks to a tree.",
+    "She befriends an English settler.",
+    "It features the song 'Colors of the Wind'.",
+    "She has a raccoon and hummingbird companion."
+  ]
+},
+{
+  title: "Snow White and the Seven Dwarfs",
+  clues: [
+    "She takes refuge in a cottage with little miners.",
+    "The villain uses a poisoned apple.",
+    "It was Disney’s first animated feature.",
+    "The dwarfs sing while they work.",
+    "Her skin is said to be 'as white as snow.'"
+  ]
+},
+{
+  title: "Cinderella",
+  clues: [
+    "A glass slipper plays a key role.",
+    "Her fairy godmother transforms her life.",
+    "She has a cruel stepmother and stepsisters.",
+    "There’s a pumpkin carriage.",
+    "She loses her shoe at a royal ball."
+  ]
+},
+{
+  title: "Pinocchio",
+  clues: [
+    "The main character is a wooden puppet.",
+    "He wants to become a real boy.",
+    "His nose grows when he lies.",
+    "Jiminy Cricket is his conscience.",
+    "The Blue Fairy helps guide him."
+  ]
+},
+{
+  title: "Dumbo",
+  clues: [
+    "The title character is an elephant.",
+    "He has unusually large ears.",
+    "He learns to fly.",
+    "He’s separated from his mother.",
+    "He works in a circus."
+  ]
+},
+{
+  title: "The Jungle Book",
+  clues: [
+    "It’s set in the Indian jungle.",
+    "The main character is a boy raised by wolves.",
+    "He’s friends with a bear named Baloo.",
+    "They sing 'The Bare Necessities'.",
+    "The tiger Shere Khan is the antagonist."
+  ]
+},
+{
+  title: "The Hunchback of Notre Dame",
+  clues: [
+    "Set in Paris.",
+    "The protagonist lives in a bell tower.",
+    "He befriends a kind gypsy woman.",
+    "Judge Frollo is the villain.",
+    "Themes include acceptance and identity."
+  ]
+},
+{
+  title: "Tarzan",
+  clues: [
+    "The main character was raised by gorillas.",
+    "He meets an explorer named Jane.",
+    "The villain wants to capture the apes.",
+    "He swings on vines.",
+    "It features songs by Phil Collins."
+  ]
+},
+{
+  title: "Atlantis: The Lost Empire",
+  clues: [
+    "It features an expedition to a mythical underwater city.",
+    "The main character is a linguist.",
+    "There’s an ancient crystal power source.",
+    "Kida is the Atlantean princess.",
+    "It blends steampunk and sci-fi vibes."
+  ]
+},
+{
+  title: "Treasure Planet",
+  clues: [
+    "It’s a futuristic retelling of a classic pirate tale.",
+    "The main character is Jim Hawkins.",
+    "They travel in space instead of the sea.",
+    "There’s a cyborg named Silver.",
+    "The treasure is on a hidden planet."
+  ]
+},
+{
+  title: "The Princess and the Frog",
+  clues: [
+    "Set in New Orleans.",
+    "The main character dreams of owning a restaurant.",
+    "She turns into an amphibian.",
+    "There’s a jazz-loving alligator.",
+    "Dr. Facilier uses voodoo magic."
+  ]
+},
+{
+  title: "Wreck-It Ralph",
+  clues: [
+    "It takes place in a video game world.",
+    "The main character is a villain who wants to be a hero.",
+    "Sugar Rush is one of the key games.",
+    "He becomes friends with Vanellope.",
+    "There's a lot of retro gaming nostalgia."
+  ]
+},
+{
+  title: "Ralph Breaks the Internet",
+  clues: [
+    "The characters travel to the online world.",
+    "There’s a room full of Disney princesses.",
+    "A viral video helps raise money.",
+    "Vanellope considers leaving her game.",
+    "They meet a character named Yesss."
+  ]
+},
+{
+  title: "Lightyear",
+  clues: [
+    "It’s a spin-off from Toy Story.",
+    "Focuses on a space ranger’s origin.",
+    "He fights Emperor Zurg.",
+    "There’s a robotic cat named Sox.",
+    "It explores time dilation and sacrifice."
+  ]
+},
+{
+  title: "The Good Dinosaur",
+  clues: [
+    "An asteroid never hit Earth in this timeline.",
+    "Dinosaurs are farmers.",
+    "The main character gets separated from his family.",
+    "He befriends a human boy.",
+    "They travel through harsh landscapes together."
+  ]
+},
+{
+  title: "Bolt",
+  clues: [
+    "The dog thinks he has superpowers.",
+    "He’s the star of a TV show.",
+    "He goes on a journey to find his human.",
+    "He’s accompanied by a cat and a hamster.",
+    "He learns what real life is like."
+  ]
+},
+{
+  title: "Planes",
+  clues: [
+    "It’s a spin-off from the Cars universe.",
+    "The main character is a crop duster.",
+    "He wants to be a racing champion.",
+    "He’s afraid of heights.",
+    "It features aerial competitions."
+  ]
+},
+{
+  title: "Cars",
+  clues: [
+    "Talking vehicles are the stars.",
+    "The main character ends up in a small town.",
+    "There’s a race called the Piston Cup.",
+    "Tow Mater is a fan favorite.",
+    "Ka-chow!"
+  ]
+},
+{
+  title: "Cars 2",
+  clues: [
+    "It turns into a spy thriller.",
+    "Mater takes the spotlight.",
+    "There’s a World Grand Prix.",
+    "New characters include Finn McMissile.",
+    "It’s one of Pixar’s most action-packed sequels."
+  ]
+},
+{
+  title: "Cars 3",
+  clues: [
+    "The main character deals with aging and legacy.",
+    "He trains with Cruz Ramirez.",
+    "There’s a new rival named Jackson Storm.",
+    "Doc Hudson’s memory plays a big role.",
+    "It returns to the franchise’s racing roots."
+  ]
+},
+{
+  title: "Meet the Robinsons",
+  clues: [
+    "A young inventor time travels to the future.",
+    "He meets a wacky family.",
+    "A bowler hat is the villain.",
+    "It encourages 'Keep Moving Forward.'",
+    "The future is bright and inventive."
+  ]
+},
+{
+  title: "Brother Bear",
+  clues: [
+    "Set in the post-Ice Age era.",
+    "The main character is transformed into an animal.",
+    "He learns empathy by living as a bear.",
+    "There are moose brothers for comic relief.",
+    "It has strong themes of family and forgiveness."
+  ]
+},
+{
+  title: "Robin Hood",
+  clues: [
+    "All the characters are animals.",
+    "The main character is a fox.",
+    "He steals from the rich to give to the poor.",
+    "Prince John is the cowardly villain.",
+    "Little John is his bear sidekick."
+  ]
+},
+  {
+    title: "Big Hero 6",
+    clues: [
+      "The story is set in San Fransokyo.",
+      "It features a lovable inflatable robot.",
+      "Hiro is the tech-savvy protagonist.",
+      "They form a superhero team.",
+      "Baymax is programmed to heal."
+    ]
+  },
+  {
+    title: "Coco",
+    clues: [
+      "It’s about music and family.",
+      "It explores the Day of the Dead.",
+      "The main character visits the Land of the Dead.",
+      "He plays a guitar.",
+      "Remember Me is the central song."
+    ]
+  },
+  {
+    title: "The Incredibles",
+    clues: [
+      "It’s about a family of superheroes.",
+      "They live undercover at first.",
+      "Each family member has unique powers.",
+      "Frozone is their icy friend.",
+      "The villain is a former fan."
+    ]
+  },
+  {
+    title: "Up",
+    clues: [
+      "An old man ties balloons to his house.",
+      "He goes on an adventure to South America.",
+      "There’s a boy scout named Russell.",
+      "Kevin is a colorful bird.",
+      "The opening montage is iconic and emotional."
+    ]
+  },
+  {
+    title: "Turning Red",
+    clues: [
+      "It’s set in Toronto.",
+      "The main character transforms into a red panda.",
+      "It’s about teenage emotions and identity.",
+      "A boy band plays a central role.",
+      "It’s inspired by early 2000s culture."
+    ]
+  },
+  {
+    title: "Soul",
+    clues: [
+      "The main character is a jazz musician.",
+      "He falls into a spiritual realm.",
+      "The Great Before is a key location.",
+      "He mentors Soul 22.",
+      "It explores purpose and passion."
+    ]
+  },
+  {
+  title: "Wish",
+  clues: [
+    "The main character makes a wish on a star.",
+    "It features a magical goat.",
+    "The villain is a sorcerer king.",
+    "Asha is the protagonist.",
+    "It's a 2023 celebration of Disney’s legacy."
+  ]
+},
+{
+  title: "Elemental",
+  clues: [
+    "It’s set in a city where elements are alive.",
+    "The main characters are fire and water.",
+    "They defy the rules of their world.",
+    "The city is called Element City.",
+    "Themes include immigration and identity."
+  ]
+},
+{
+  title: "Strange World",
+  clues: [
+    "An explorer family travels into a mysterious land.",
+    "The world is colorful and alien-like.",
+    "There’s a dog sidekick named Legend.",
+    "They discover a major environmental secret.",
+    "It’s a 2022 Disney adventure film."
+  ]
+},
+{
+  title: "The Rescuers",
+  clues: [
+    "Two mice are the heroes.",
+    "They work for the Rescue Aid Society.",
+    "They help a kidnapped orphan named Penny.",
+    "There's a villain named Madame Medusa.",
+    "Bernard and Bianca are the stars."
+  ]
+},
+{
+  title: "The Rescuers Down Under",
+  clues: [
+    "It takes place in Australia.",
+    "They help a boy who befriends a golden eagle.",
+    "Features a poacher villain named McLeach.",
+    "Cody is the child in danger.",
+    "The mice return for a second adventure."
+  ]
+},
+{
+  title: "Oliver & Company",
+  clues: [
+    "It’s based on Oliver Twist.",
+    "Set in New York City.",
+    "The main character is a kitten.",
+    "Dodger is a street-smart dog.",
+    "Features the song 'Why Should I Worry?'"
+  ]
+},
+{
+  title: "The Black Cauldron",
+  clues: [
+    "A darker Disney fantasy film.",
+    "The villain is the Horned King.",
+    "It features a magical pig.",
+    "Taran wants to be a great warrior.",
+    "Based on the Chronicles of Prydain."
+  ]
+},
+{
+  title: "The Sword in the Stone",
+  clues: [
+    "A young Arthur is trained by Merlin.",
+    "He’s nicknamed Wart.",
+    "They turn into animals to learn lessons.",
+    "There’s a wizard duel with Madam Mim.",
+    "He pulls the sword from the stone."
+  ]
+},
+{
+  title: "The Great Mouse Detective",
+  clues: [
+    "A mouse version of Sherlock Holmes.",
+    "The villain is a rat named Ratigan.",
+    "Set in Victorian London.",
+    "There’s a kidnapped toymaker.",
+    "Basil is the main detective."
+  ]
+},
+{
+  title: "The Aristocats",
+  clues: [
+    "Set in Paris with classy felines.",
+    "The cats are left a fortune in a will.",
+    "They get kidnapped by a butler.",
+    "Thomas O’Malley helps them return home.",
+    "Jazz cats sing 'Everybody Wants to Be a Cat.'"
+  ]
+},
+{
+  title: "Bambi",
+  clues: [
+    "A deer grows up in the forest.",
+    "His mother is tragically lost.",
+    "Thumper and Flower are his friends.",
+    "The film follows seasons of life.",
+    "Known for its emotional storytelling."
+  ]
+},
+{
+  title: "Fantasia",
+  clues: [
+    "A musical anthology with classical music.",
+    "Features Mickey as a sorcerer’s apprentice.",
+    "Has dancing hippos and alligators.",
+    "Combines animation and orchestra.",
+    "It’s one of Disney’s most artistic films."
+  ]
+},
+{
+  title: "Fantasia 2000",
+  clues: [
+    "A sequel to the original Fantasia.",
+    "Features whales flying through the sky.",
+    "Includes 'Rhapsody in Blue'.",
+    "Famous music set to animation.",
+    "Broomsticks return with Mickey."
+  ]
+},
+{
+  title: "Saludos Amigos",
+  clues: [
+    "Set in South America.",
+    "Features Donald Duck and Goofy.",
+    "It's part documentary, part cartoon.",
+    "Jose Carioca is introduced.",
+    "It was made during WWII as goodwill."
+  ]
+},
+{
+  title: "The Three Caballeros",
+  clues: [
+    "Donald Duck travels through Latin America.",
+    "Jose Carioca and Panchito are his friends.",
+    "It's a blend of live-action and animation.",
+    "Includes birthday presents and postcards.",
+    "Very colorful and musical."
+  ]
+},
+{
+  title: "A Goofy Movie",
+  clues: [
+    "Goofy takes his son on a road trip.",
+    "Max wants to impress a girl named Roxanne.",
+    "They end up on stage at a concert.",
+    "The movie is full of 90s vibes.",
+    "Powerline is a pop star in the story."
+  ]
+},
+{
+  title: "An Extremely Goofy Movie",
+  clues: [
+    "Max goes to college.",
+    "Goofy enrolls too!",
+    "Features an extreme sports competition.",
+    "Goofy finds love on campus.",
+    "It's a direct-to-video sequel."
+  ]
+},
+{
+  title: "DuckTales the Movie: Treasure of the Lost Lamp",
+  clues: [
+    "Scrooge McDuck goes on an adventure.",
+    "They find a magic lamp and genie.",
+    "Based on a popular 90s cartoon.",
+    "They search for the treasure of Collie Baba.",
+    "An evil sorcerer wants the lamp."
+  ]
+},
+{
+  title: "Tinker Bell",
+  clues: [
+    "A prequel to Peter Pan.",
+    "Explores fairy life in Pixie Hollow.",
+    "She’s a tinker fairy, not just a helper.",
+    "Voice by Mae Whitman.",
+    "Leads to a full fairy movie series."
+  ]
+},
+{
+  title: "Tinker Bell and the Lost Treasure",
+  clues: [
+    "Tinker Bell goes on a solo journey.",
+    "She searches for a magical moonstone.",
+    "The Autumn Revelry is in danger.",
+    "She has a falling out with her friend Terence.",
+    "It’s about fixing mistakes and forgiveness."
+  ]
+},
+{
+  title: "Tinker Bell and the Great Fairy Rescue",
+  clues: [
+    "She gets trapped by a human girl.",
+    "Fairies try to rescue her.",
+    "She learns that not all humans are scary.",
+    "Set in the English countryside.",
+    "The girl’s father doesn’t believe in fairies."
+  ]
+},
+{
+  title: "Planes: Fire & Rescue",
+  clues: [
+    "Dusty joins a fire rescue team.",
+    "It takes place in the national park.",
+    "He learns about heroism and teamwork.",
+    "Introduces Blade Ranger and Dipper.",
+    "A follow-up to the original Planes."
+  ]
+},
+{
+  title: "Return to Never Land",
+  clues: [
+    "Wendy’s daughter is taken to Neverland.",
+    "Set during WWII.",
+    "Hook returns as the villain.",
+    "Jane must learn to believe in magic.",
+    "Tinker Bell nearly loses her light."
+  ]
+},
+{
+  title: "Bambi II",
+  clues: [
+    "Follows Bambi after his mother’s death.",
+    "Focuses on his relationship with his father.",
+    "It’s a midquel, not a sequel.",
+    "Bambi learns to be brave.",
+    "Released decades after the original."
+  ]
+},
+{
+  title: "Cinderella III: A Twist in Time",
+  clues: [
+    "An alternate timeline is created.",
+    "The stepmother uses a magic wand.",
+    "Anastasia is given a redemption arc.",
+    "Cinderella must win back the prince.",
+    "Surprisingly clever for a sequel."
+  ]
+},
+  {
+    title: "Onward",
+    clues: [
+      "It takes place in a modern fantasy world.",
+      "Two elf brothers go on a quest.",
+      "They want to bring back their dad for one day.",
+      "Magic is fading from the world.",
+      "Their van is named Guinevere."
+    ]
+  },
+  {
+    title: "WALL-E",
+    clues: [
+      "It’s set in the distant future.",
+      "The Earth is covered in trash.",
+      "The main character is a robot.",
+      "He falls in love with another robot named EVE.",
+      "Humans live on a spaceship."
+    ]
+  },
+  {
+    title: "A Bug's Life",
+    clues: [
+      "It’s about an ant who wants to be more.",
+      "He recruits a group of circus bugs.",
+      "They face off against a group of grasshoppers.",
+      "Flik is the main character.",
+      "It was Pixar’s second film."
+    ]
+  },
+  {
+    title: "Monsters, Inc.",
+    clues: [
+      "It’s set in a city powered by children's screams.",
+      "The main characters are blue and green monsters.",
+      "They accidentally let a little girl into their world.",
+      "Boo is the girl's name.",
+      "Doors are a big deal!"
+    ]
+  }
+];
+
+    let currentMovie;
+    let triesLeft;
+    let clueIndex;
+
+    const guessInput = document.getElementById("guessInput");
+    const clueBox = document.getElementById("clue");
+    const result = document.getElementById("result");
+    const triesDisplay = document.getElementById("tries");
+    const datalist = document.getElementById("movies");
+    const restartBtn = document.getElementById("restartBtn");
+
+    function populateDatalist() {
+      datalist.innerHTML = "";
+      movieData.forEach(movie => {
+        const option = document.createElement("option");
+        option.value = movie.title;
+        datalist.appendChild(option);
+      });
+    }
+
+    function initGame() {
+      currentMovie = movieData[Math.floor(Math.random() * movieData.length)];
+      triesLeft = 5;
+      clueIndex = 0;
+      guessInput.value = "";
+      clueBox.textContent = "";
+      result.textContent = "";
+      triesDisplay.textContent = triesLeft;
+      restartBtn.style.display = "none";
+      populateDatalist();
+    }
+
+    function checkGuess() {
+      const guess = guessInput.value.trim();
+
+      if (guess.toLowerCase() === currentMovie.title.toLowerCase()) {
+        result.textContent = `🎉 Correct! The answer is "${currentMovie.title}".`;
+        result.style.color = "green";
+        clueBox.textContent = "";
+        restartBtn.style.display = "inline-block";
+        return;
+      }
+
+      triesLeft--;
+      triesDisplay.textContent = triesLeft;
+
+      if (triesLeft === 0) {
+        result.textContent = `😢 Out of tries! The correct answer was "${currentMovie.title}".`;
+        result.style.color = "red";
+        clueBox.textContent = "";
+        restartBtn.style.display = "inline-block";
+        return;
+      }
+
+      clueBox.textContent = `Clue: ${currentMovie.clues[clueIndex]}`;
+      clueIndex++;
+      result.textContent = `Incorrect. Try again!`;
+      result.style.color = "#333";
+    }
+
+    function restartGame() {
+      initGame();
+    }
+
+    // Start game on load
+    initGame();
+  </script>
+
+</body>
+</html>
